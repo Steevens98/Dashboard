@@ -56,8 +56,27 @@ let load = (data) => {
   
   plot(data)
   uv(data)
-
+  
+  
  }
+
+ let loadInocar = () => {
+      let URL_proxy = 'https://cors-anywhere.herokuapp.com/'
+      let URL = URL_proxy +'https://www.inocar.mil.ec/mareas/consultan.php';
+    fetch(URL)
+     	.then(response => response.text())
+        .then(data => {
+           const parser = new DOMParser();
+           const xml = parser.parseFromString(data,"text/html");
+           let contenedorMareas = xml.getElementsByClassName('container-fluid')[0];
+           let contenedorHTML = document.getElementById('table-container');
+           contenedorHTML.innerHTML = contenedorMareas.innerHTML;
+           console.log(xml);
+      })
+      .catch(console.error);
+  }
+
+
 
 (function () {
   let meteo = localStorage.getItem('meteo');
@@ -69,9 +88,11 @@ let load = (data) => {
     .then((data) => {
       load(data)
       localStorage.setItem("meteo", JSON.stringify(data))
+      
     })
     .catch(console.error);
   }else{
     load(JSON.parse(meteo))
   }
+  loadInocar();
 })();
